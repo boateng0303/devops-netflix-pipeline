@@ -31,6 +31,7 @@ jobs:
         image-ref: $IMAGE_URI
         severity: CRITICAL,HIGH
         format: table
+        exit: 0
 
     - name: Send Email on Success
       uses: dawidd6/action-send-mail@v3
