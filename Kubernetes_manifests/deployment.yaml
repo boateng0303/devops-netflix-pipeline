@@ -17,5 +17,5 @@ spec:
         image: 954108257389.dkr.ecr.us-east-1.amazonaws.com/kay:18
         ports:
         - containerPort: 80
-       imagePullSecrets:
+      imagePullSecrets:
       - name: regcred
