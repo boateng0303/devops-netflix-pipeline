@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: netflix
-        image: devopsacrdevoppipe2132.azurecr.io/netflix:latest
+        image: 954108257389.dkr.ecr.us-east-1.amazonaws.com/kay:18
         ports:
         - containerPort: 80
        imagePullSecrets:
