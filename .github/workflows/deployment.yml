@@ -28,19 +28,6 @@ jobs:
           --region ${{ secrets.AWS_REGION }} \
           --name ${{ secrets.EKS_CLUSTER_NAME }}
 
-    - name: Create or update regcred for ECR
-      run: |
-        if ! kubectl get secret regcred --namespace=default; then
-          aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | \
-          kubectl create secret docker-registry regcred \
-            --docker-server=${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com \
-            --docker-username=AWS \
-            --docker-password-stdin \
-            --namespace=default
-        else
-          echo "regcred already exists"
-        fi
-
 
     - name: Update tag in Deployment file
       run: |
