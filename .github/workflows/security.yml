@@ -15,6 +15,14 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
+    - name: Set image URI
+      id: set-image
+      run: |
+        IMAGE_TAG=${{ github.event.workflow_run.run_number }}
+        IMAGE_URI=${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.ECR_REPOSITORY }}:$IMAGE_TAG
+        echo "IMAGE_URI=$IMAGE_URI" >> $GITHUB_ENV
+        echo "::set-output name=image-uri::$IMAGE_URI"
+
     - name: SonarCloud Scan
       uses: SonarSource/sonarcloud-github-action@v2
       with:
@@ -28,7 +36,7 @@ jobs:
     - name: Trivy Image Scan
       uses: aquasecurity/trivy-action@master
       with:
-        image-ref: ${{ steps.get-image.outputs.image-uri }}
+        image-ref: ${{ steps.set-image.outputs.image-uri }}
         severity: CRITICAL,HIGH
         format: table
         exit-code: 0
