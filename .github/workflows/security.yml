@@ -1,0 +1,44 @@
+name: Scan Image and Notify
+
+on:
+  workflow_run:
+    workflows: ["Build and Push to ECR"]
+    types:
+      - completed
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: SonarCloud Scan
+      uses: SonarSource/sonarcloud-github-action@v2
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        SONAR_PROJECT_KEY: ${{ secrets.SONAR_PROJECT_KEY }}
+        SONAR_ORGANIZATION: ${{ secrets.SONAR_ORGANIZATION }}
+
+    - name: Trivy Image Scan
+      uses: aquasecurity/trivy-action@master
+      with:
+        image-ref: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.ECR_REPOSITORY }}:latest
+        severity: CRITICAL,HIGH
+        format: table
+
+    - name: Send Email on Success
+      uses: dawidd6/action-send-mail@v3
+      with:
+        server_address: smtp.gmail.com
+        server_port: 587
+        username: ${{ secrets.EMAIL_SENDER }}
+        password: ${{ secrets.EMAIL_PASSWORD }}
+        subject: "✅ Security Scan Passed"
+        to: ${{ secrets.EMAIL_RECEIVER }}
+        from: GitHub Actions <${{ secrets.EMAIL_SENDER }}>
+        body: |
+          ✅ Security and code quality scans passed successfully.
+          ✅ Image: ${{ secrets.ECR_REPOSITORY }}:latest
