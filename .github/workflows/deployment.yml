@@ -31,7 +31,8 @@ jobs:
 
     - name: Update tag in Deployment file
       run: |
-          sed -i "s|\(image: .*\/kay:\).*|\1${{ github.run_id }}|" Kubernetes_manifests/deployment.yaml
+          sed -i "s|image: .*/${{ secrets.ECR_REPOSITORY }}:.*|image: $IMAGE_URI|" Kubernetes_manifests/deployment.yaml
+
 
     - name: Deploy to EKS
       run: |
