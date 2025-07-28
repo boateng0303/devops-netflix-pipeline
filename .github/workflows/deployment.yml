@@ -29,18 +29,19 @@ jobs:
           --name ${{ secrets.EKS_CLUSTER_NAME }}
 
 
-    - name: Update tag in Deployment file
+    - name: Update deployment directly
       run: |
-           IMAGE_URI="${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.ECR_REPOSITORY }}:${{ github.run_number }}"
-           echo "IMAGE_URI: $IMAGE_URI"
-    
-           echo "Before sed:"
-           cat Kubernetes_manifests/deployment.yaml | grep -A2 -B2 "image:"
-    
-           sed -i "s|image:.*|image: $IMAGE_URI|" Kubernetes_manifests/deployment.yaml
-    
-           echo "After sed:"
-           cat Kubernetes_manifests/deployment.yaml | grep -A2 -B2 "image:"
+        IMAGE_URI="954108257389.dkr.ecr.us-east-1.amazonaws.com/netflix-app:${{ github.run_number }}"
+        echo "Updating deployment image to: $IMAGE_URI"
+        
+        # Update the image directly in Kubernetes
+        kubectl set image deployment/netflix-deployment netflix=$IMAGE_URI
+        
+        # Wait for the rollout
+        kubectl rollout status deployment/netflix-deployment --timeout=300s
+        
+        # Verify the new image
+        kubectl get deployment netflix-deployment -o jsonpath='{.spec.template.spec.containers[0].image}'
 
 
     - name: Deploy to EKS
