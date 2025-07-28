@@ -31,7 +31,7 @@ jobs:
 
     - name: Update tag in Deployment file
       run: |
-          sed -i "s|image: .*|image: $IMAGE_URI|" Kubernetes_manifests/deployment.yaml
+          sed -i "s|image:.*|image: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.ECR_REPOSITORY }}:${{ github.run_number }}|" Kubernetes_manifests/deployment.yaml
 
 
 
