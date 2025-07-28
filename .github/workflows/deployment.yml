@@ -31,14 +31,16 @@ jobs:
 
     - name: Update tag in Deployment file
       run: |
-         echo "IMAGE_URI: $IMAGE_URI"
-         echo "Before sed:"
-         cat Kubernetes_manifests/deployment.yaml | grep -A2 -B2 "image:"
+           IMAGE_URI="${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.ECR_REPOSITORY }}:${{ github.run_number }}"
+           echo "IMAGE_URI: $IMAGE_URI"
     
-         sed -i "s|image:.*|image: $IMAGE_URI|" Kubernetes_manifests/deployment.yaml
+           echo "Before sed:"
+           cat Kubernetes_manifests/deployment.yaml | grep -A2 -B2 "image:"
     
-         echo "After sed:"
-         cat Kubernetes_manifests/deployment.yaml | grep -A2 -B2 "image:"
+           sed -i "s|image:.*|image: $IMAGE_URI|" Kubernetes_manifests/deployment.yaml
+    
+           echo "After sed:"
+           cat Kubernetes_manifests/deployment.yaml | grep -A2 -B2 "image:"
 
 
     - name: Deploy to EKS
