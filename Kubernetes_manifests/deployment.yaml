@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: netflix
-        image:  AWS_ACCOUNT_ID.dkr.ecr.AWS_REGION.amazonaws.com/ECR_REPOSITORY:latest
+        image: 954108257389.dkr.ecr.us-east-1.amazonaws.com/netflix-app:34
         ports:
         - containerPort: 80
       imagePullSecrets:
