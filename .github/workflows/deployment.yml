@@ -24,9 +24,15 @@ jobs:
       run: |
         aws eks update-kubeconfig --region ${{ secrets.AWS_REGION }} --name ${{ secrets.EKS_CLUSTER_NAME }}
 
-    - name: Replace image and deploy
+    - name: Create Kubernetes image pull secret 
       run: |
-        IMAGE_TAG=${{ github.run_number }}
-        IMAGE_URI=${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.ECR_REPOSITORY }}:$IMAGE_TAG
-        sed "s|IMAGE_URI_PLACEHOLDER|$IMAGE_URI|g" Kubernetes_manifests/deployment.yaml > Kubernetes_manifests/deployment-updated.yaml
-        kubectl apply -f Kubernetes_manifests/deployment-updated.yaml
+        aws ecr get-login-password --region us-east-1 | kubectl create secret docker-registry regcred \
+          --docker- ${{ secrets.ACCOUNT}}.dkr.ecr. ${{ secrets.AWS_REGION }}.amazonaws.com \
+          --docker-username=AWS \
+          --docker-password-stdin \
+          --namespace=default || true
+
+    - name: Apply Kubernetes manifests
+      run: |
+          kubectl apply -f Kubernetes_manifests/deployment.yaml
+          kubectl apply -f Kubernetes_manifests/service.yaml
