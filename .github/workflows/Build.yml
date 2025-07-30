@@ -40,14 +40,6 @@ jobs:
         docker build --build-arg TMDB_V3_API_KEY=${{ secrets.TMDB_V3_API_KEY }} -t $IMAGE_URI .
         docker push $IMAGE_URI
 
-    - name: Set image tag
-      run: echo "${{ github.run_number }}"  > image_tag.txt
-
-    - name: Upload image tag artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: image-tag
-        path: image_tag.txt
 
 
     - name: Replace image tag in deployment.yaml
