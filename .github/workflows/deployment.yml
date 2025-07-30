@@ -27,7 +27,7 @@ jobs:
     - name: Create Kubernetes image pull secret 
       run: |
         aws ecr get-login-password --region us-east-1 | kubectl create secret docker-registry regcred \
-          --docker- ${{ secrets.ACCOUNT}}.dkr.ecr. ${{ secrets.AWS_REGION }}.amazonaws.com \
+          --docker-server ${{ secrets.ACCOUNT}}.dkr.ecr. ${{ secrets.AWS_REGION }}.amazonaws.com \
           --docker-username=AWS \
           --docker-password-stdin \
           --namespace=default || true
