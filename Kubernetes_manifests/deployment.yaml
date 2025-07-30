@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: netflix
-        image: 954108257389.dkr.ecr.us-east-1.amazonaws.com/netflix-app:43
+        image: 954108257389.dkr.ecr.us-east-1.amazonaws.com/netflix-app:44
         ports:
         - containerPort: 80
       imagePullSecrets:
